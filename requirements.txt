@@ -1,0 +1,8 @@
+Flask
+fastapi
+uvicorn
+mysql-connector-python
+python-dotenv
+sqlalchemy
+jinja2
+python-multipart

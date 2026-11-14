@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield - Security Alerts</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            margin: 20px 0;
+            color: #22c55e;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .count {
+            font-size: 32px;
+            color: #38bdf8;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1e293b;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #334155;
+            text-align: left;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .severity {
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .new {
+            color: #facc15;
+            font-weight: bold;
+        }
+
+        .resolved {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .resolve-btn {
+            padding: 9px 14px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .resolve-btn:hover {
+            background: #15803d;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .empty {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .message {
+            padding: 12px;
+            margin: 15px 0;
+            background: #334155;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Security Alerts</h1>
+        <p>CyberShield - Intelligent Threat Monitoring System</p>
+
+        <p class="status">API Status: {{ api_status }}</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="card">
+            <h2>Total Security Alerts</h2>
+            <p class="count">{{ total_alerts }}</p>
+        </div>
+
+        <h2>Alert Details</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Alert ID</th>
+                    <th>Log ID</th>
+                    <th>Alert Type</th>
+                    <th>Severity</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Date & Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert.id }}</td>
+                    <td>{{ alert.log_id }}</td>
+                    <td>{{ alert.alert_type }}</td>
+                    <td class="severity">{{ alert.severity }}</td>
+                    <td>{{ alert.message }}</td>
+
+                    <td>
+                        {% if alert.status == 'New' %}
+                            <span class="new">New</span>
+                        {% else %}
+                            <span class="resolved">Resolved</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ alert.created_at }}</td>
+
+                    <td>
+                        {% if alert.status == 'New' %}
+                            <form action="{{ url_for('resolve_alert', alert_id=alert.id) }}"
+                                  method="POST">
+                                <button type="submit" class="resolve-btn">
+                                    Mark Resolved
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="resolved">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% else %}
+                <tr>
+                    <td colspan="8" class="empty">
+                        No security alerts found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('dashboard') }}" class="back">
+            Back to Dashboard
+        </a>
+
+    </div>
+</body>
+</html>
